@@ -34,7 +34,7 @@ client.on('message', async msg => {
     else if(msg.content.trim().startsWith(props.guildList[msg.guild.id].prefix)){
         content = splitOnce(msg.content.trim(), props.guildList[msg.guild.id].prefix)[1].trim();
     }
-    else return;
+    else return props.testJob(msg.guild, msg.channel);
     if(content === "") return props.testJob(msg.guild, msg.channel);
 
     let split = splitOnce(content, " ");
