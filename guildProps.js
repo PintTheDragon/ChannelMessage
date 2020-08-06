@@ -41,7 +41,7 @@ module.exports.addGuild = function(guildId, data){
 }
 
 module.exports.addNewGuild = function(guildId){
-    module.exports.guildList[guildId] = {"prefix": "Lg==", "jobs": {}};
+    module.exports.guildList[guildId] = {"prefix": ".", "jobs": {}};
     module.exports.saveGuild(guildId);
 }
 
