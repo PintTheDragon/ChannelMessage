@@ -29,7 +29,6 @@ module.exports.addMessage = function(channel, guild, content){
 
 module.exports.deleteMessage = async function(channel, guild, content){
     try {
-        if(isNaN(content)) channel.send("Invalid id!");
         if(!module.exports.props.guildList[guild.id]["jobs"].hasOwnProperty(content)) channel.send("Invalid id!");
         let message = module.exports.props.guildList[guild.id]["jobs"][content]["lastId"];
         if(message != null) {
