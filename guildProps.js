@@ -17,10 +17,10 @@ module.exports.setupMysql = function(){
 
             for(let i = 0; i < result.length; i++){
                 try {
-                    module.exports.addGuild(result[i]["id"], JSON.parse(result[i]["data"]));
+                    module.exports.addGuild(result[i]["id"].replace(/^'/, "").replace(/'$/, ""), JSON.parse(result[i]["data"].replace(/^'/, "").replace(/'$/, "")));
                 }
                 catch(e){
-                    module.exports.addNewGuild(result[i]["id"]);
+                    module.exports.addNewGuild(result[i]["id"].replace(/^'/, "").replace(/'$/, ""));
                 }
             }
         });
