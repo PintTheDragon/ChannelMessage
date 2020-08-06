@@ -27,10 +27,15 @@ module.exports.addMessage = function(channel, guild, content){
     };
 }
 
-module.exports.deleteMessage = function(guild, content){
+module.exports.deleteMessage = async function(guild, content){
     try {
         if(isNaN(content)) channel.send("Invalid id!");
         if(!module.exports.props.guildList[guild.id]["jobs"].hasOwnProperty(content)) channel.send("Invalid id!");
+        let message = module.exports.props.guildList[guild.id]["jobs"][content]["lastId"];
+        if(message != null) {
+            let message = await channel.messages.fetch(message);
+            if (message) message.delete();
+        }
         delete module.exports.props.guildList[guild.id]["jobs"][content];
         module.exports.props.saveGuild(guild.id);
         return true;

@@ -16,6 +16,7 @@ client.on('ready', () => {
     console.log("Bot started!");
     id = client.user.id;
     idMsg = "<@!"+id+">";
+    client.user.setPresence({ activity: { name: 'on '+getServercount()+" servers." }, status: 'online' });
 });
 
 client.on('guildCreate', async guild => {
@@ -57,10 +58,7 @@ client.on('message', async msg => {
         case "deletemessage":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
             if(split.length === 1) return msg.reply("usage: "+prefix+"deleteMessage <id>");
-            if(commands.deleteMessage(msg.guild, arg)){
-                msg.reply("message deleted!");
-                msg.delete();
-            }
+            if((await commands.deleteMessage(msg.guild, arg))) msg.delete();
             break;
         case "messages":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
@@ -77,6 +75,10 @@ client.on('message', async msg => {
 function splitOnce(inp, delim){
     let arr = inp.split(delim);
     return [arr.shift(), arr.join(delim)];
+}
+
+function getServercount(){
+    return client.guilds.cache.array().length;
 }
 
 client.login(process.env.TOKEN);
