@@ -35,7 +35,7 @@ module.exports.addGuild = function(guildId, data){
     if(!data.hasOwnProperty("prefix") || !data.hasOwnProperty("jobs")) return module.exports.addNewGuild(guildId);
     module.exports.guildList[guildId] = data;
     Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
-        module.exports.guildList[guildId]["jobs"][key]["data"] = Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8');
+        module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
     });
     module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"], 'base64').toString('utf8');
 }
