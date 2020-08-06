@@ -61,6 +61,7 @@ module.exports.runJob = async function(guild, jobData, jobId){
     }
 
     module.exports.guildList[guild.id]["jobs"][jobId]["lastId"] = (await module.exports.sendMessage(channel, jobData["data"], jobId)).id;
+    module.exports.saveGuild(guild.id);
 }
 
 module.exports.removeJob = function(guildId, jobId){
