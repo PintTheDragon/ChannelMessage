@@ -35,7 +35,7 @@ client.on('message', async msg => {
         content = splitOnce(msg.content.trim(), props.guildList[msg.guild.id].prefix)[1].trim();
     }
     else return;
-    if(content === "") return;
+    if(content === "") return props.testJob(msg.guild, msg.channel);
 
     let split = splitOnce(content, " ");
     let prefix = props.guildList[msg.guild.id]["prefix"];
