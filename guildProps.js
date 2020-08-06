@@ -1,3 +1,27 @@
+const mysql = require('mysql');
+
+let con;
+
+module.exports.setupMysql = function(){
+    con = mysql.createConnection({
+        host: process.env.HOST,
+        user: process.env.USER,
+        password: process.env.PASS,
+        database: process.env.DATABASE
+    });
+    con.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected!");
+        con.query("SELECT * FROM Data;", async (err, result) =>{
+            if(err) throw err;
+
+            for(let i = 0; i < result.length; i++){
+                module.exports.addGuild(result[i]["id"], result[i]["data"]);
+            }
+        });
+    });
+}
+
 // {guildId: {prefix, jobs: {id: {lastId, channelId, data}}}
 //data is json from https://discohook.org
 module.exports.guildList = {};
@@ -13,7 +37,8 @@ module.exports.addNewGuild = function(guildId){
 }
 
 module.exports.saveGuild = async function(guildId){
-
+    let json = JSON.stringify(module.exports.guildList[guildId]);
+    con.query('INSERT INTO table (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
 }
 
 module.exports.runJob = async function(guild, jobData, jobId){

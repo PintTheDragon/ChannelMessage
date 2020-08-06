@@ -3,6 +3,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 const props = require("./guildProps.js");
+props.index = this;
+props.setupMysql();
 const commands = require("./commands.js");
 commands.Discord = Discord;
 commands.props = props;
