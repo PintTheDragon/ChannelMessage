@@ -48,6 +48,7 @@ module.exports.sendMessage = function(channel, data, jobId){
     }
     if(data.hasOwnProperty("embeds") && data["embeds"].length == 1) {
         embed = data["embeds"][0];
+        embed["footer"] = {text: "Id: "+jobId};
     }
     if(content == null && embed == null) return channel.send("Content and embed is blank. Id: "+jobId);
     if(content == null) return channel.send({"embed": embed});

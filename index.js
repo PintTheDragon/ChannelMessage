@@ -49,12 +49,18 @@ client.on('message', async msg => {
         case "addmessage":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
             if(split.length == 1) return msg.reply("usage: "+prefix+"addMessage <data>");
-            if(commands.addMessage(msg.channel, msg.guild, split[1].trim())) msg.delete();
+            if(commands.addMessage(msg.channel, msg.guild, split[1].trim())){
+                msg.reply("message added!");
+                msg.delete();
+            }
             break;
         case "deletemessage":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
             if(split.length == 1) return msg.reply("usage: "+prefix+"deleteMessage <id>");
-            commands.deleteMessage(msg.guild, split[1].trim());
+            if(commands.deleteMessage(msg.guild, split[1].trim())){
+                msg.reply("message deleted!");
+                msg.delete();
+            }
             break;
         case "messages":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
