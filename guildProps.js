@@ -55,9 +55,8 @@ module.exports.runJob = async function(guild, jobData, jobId){
     if(!channel) return module.exports.removeJob(guild.id, jobId);
 
     if(jobData["lastId"] != null) {
-        let message = channel.messages.cache.get(jobData["lastId"]);
-        if (!message) return module.exports.removeJob(guild.id, jobId);
-        message.delete();
+        let message = await channel.messages.fetch(jobData["lastId"]);
+        if (message) message.delete();
     }
 
     module.exports.guildList[guild.id]["jobs"][jobId]["lastId"] = (await module.exports.sendMessage(channel, jobData["data"], jobId)).id;
