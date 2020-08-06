@@ -34,6 +34,9 @@ module.exports.guildList = {};
 module.exports.addGuild = function(guildId, data){
     if(!data.hasOwnProperty("prefix") || !data.hasOwnProperty("jobs")) return module.exports.addNewGuild(guildId);
     module.exports.guildList[guildId] = data;
+    Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
+        module.exports.guildList[guildId]["jobs"][key]["data"] = new Buffer(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8');
+    });
 }
 
 module.exports.addNewGuild = function(guildId){
@@ -42,8 +45,14 @@ module.exports.addNewGuild = function(guildId){
 }
 
 module.exports.saveGuild = async function(guildId){
+    Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
+        module.exports.guildList[guildId]["jobs"][key]["data"] = new Buffer(module.exports.guildList[guildId]["jobs"][key]["data"]).toString('base64');
+    });
     let json = JSON.stringify(module.exports.guildList[guildId]);
     con.query('INSERT INTO Data (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
+    Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
+        module.exports.guildList[guildId]["jobs"][key]["data"] = new Buffer(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8');
+    });
 }
 
 module.exports.runJob = async function(guild, jobData, jobId){
