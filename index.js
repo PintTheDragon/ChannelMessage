@@ -31,15 +31,15 @@ client.on('message', async msg => {
 
     let content = "";
     if(msg.content.trim().startsWith(idMsg)){
-        content = msg.content.trim().split(idMsg)[1].trim().replace("\n", "");
+        content = splitOnce(msg.content.trim(), idMsg)[1].trim();
     }
     else if(msg.content.trim().startsWith(props.guildList[msg.guild.id].prefix)){
-        content = msg.content.trim().split(props.guildList[msg.guild.id].prefix)[1].trim().replace("\n", "");
+        content = splitOnce(msg.content.trim(), props.guildList[msg.guild.id].prefix)[1].trim();
     }
     else return;
     if(content === "") return;
 
-    let split = content.split(/\s(.+)/);
+    let split = splitOnce(content, " ");
     let prefix = props.guildList[msg.guild.id]["prefix"];
     switch(split[0].toLowerCase().trim()){
         case "help":
@@ -73,5 +73,10 @@ client.on('message', async msg => {
             break;
     }
 });
+
+function splitOnce(inp, delim){
+    let arr = inp.split(delim);
+    return [arr.shift(), arr.join(delim)];
+}
 
 client.login(process.env.TOKEN);
