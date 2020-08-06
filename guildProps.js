@@ -16,7 +16,12 @@ module.exports.setupMysql = function(){
             if(err) throw err;
 
             for(let i = 0; i < result.length; i++){
-                module.exports.addGuild(result[i]["id"], result[i]["data"]);
+                try {
+                    module.exports.addGuild(result[i]["id"], JSON.parse(result[i]["data"]));
+                }
+                catch(e){
+                    module.exports.addNewGuild(result[i]["id"]);
+                }
             }
         });
     });
