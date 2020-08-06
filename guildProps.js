@@ -36,6 +36,9 @@ module.exports.addGuild = function(guildId, data){
     module.exports.guildList[guildId] = data;
     Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
         module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
+        if(typeof module.exports.guildList[guildId]["jobs"][key]["data"] === "string") {
+            module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(module.exports.guildList[guildId]["jobs"][key]["data"]).replace(/(?:\\[rn])+/g, '');
+        }
     });
     module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"], 'base64').toString('utf8');
 }
@@ -54,6 +57,9 @@ module.exports.saveGuild = async function(guildId){
     con.query('INSERT INTO Data (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
     Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
         module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
+        if(typeof module.exports.guildList[guildId]["jobs"][key]["data"] === "string") {
+            module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(module.exports.guildList[guildId]["jobs"][key]["data"]).replace(/(?:\\[rn])+/g, '');
+        }
     });
     module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"], 'base64').toString('utf8');
 }
@@ -63,12 +69,20 @@ module.exports.runJob = async function(guild, jobData, jobId){
         return module.exports.removeJob(guild.id, jobId);
     }
 
-    let channel = guild.channels.cache.get(jobData["channelId"]);
-    if(!channel) return module.exports.removeJob(guild.id, jobId);
+    try {
+        let channel = guild.channels.cache.get(jobData["channelId"]);
+        if (!channel) return module.exports.removeJob(guild.id, jobId);
+    }
+    catch(e){
+        return module.exports.removeJob(guild.id, jobId);
+    }
 
     if(jobData["lastId"] != null) {
-        let message = await channel.messages.fetch(jobData["lastId"]);
-        if (message) message.delete();
+        try {
+            let message = await channel.messages.fetch(jobData["lastId"]);
+            if (message) message.delete();
+        }
+        catch(e){}
     }
 
     module.exports.guildList[guild.id]["jobs"][jobId]["lastId"] = (await module.exports.sendMessage(channel, jobData["data"], jobId)).id;
