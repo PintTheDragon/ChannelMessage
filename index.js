@@ -27,8 +27,6 @@ client.on('message', async msg => {
 
     if(!props.guildList.hasOwnProperty(msg.guild.id)) props.addNewGuild(msg.guild.id);
 
-    props.testJob(msg.guild, msg.channel);
-
     let content = "";
     if(msg.content.trim().startsWith(idMsg)){
         content = splitOnce(msg.content.trim(), idMsg)[1].trim();
@@ -41,7 +39,12 @@ client.on('message', async msg => {
 
     let split = splitOnce(content, " ");
     let prefix = props.guildList[msg.guild.id]["prefix"];
-    switch(split[0].toLowerCase().trim()){
+    let cmd = split[0].toLowerCase().trim();
+    let arg = split[1].trim();
+
+    if(!cmd.startsWith("help") && !cmd.startsWith("addmessage") && !cmd.startsWith("deletemessage") && !cmd.startsWith("messages") && !cmd.startsWith("prefix")) return props.testJob(msg.guild, msg.channel);
+
+    switch(cmd){
         case "help":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
             commands.helpCommand(msg.channel);
@@ -49,7 +52,7 @@ client.on('message', async msg => {
         case "addmessage":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
             if(split.length === 1) return msg.reply("usage: "+prefix+"addMessage <data>");
-            if(commands.addMessage(msg.channel, msg.guild, split[1].trim())){
+            if(commands.addMessage(msg.channel, msg.guild, arg)){
                 msg.reply("message added!");
                 msg.delete();
             }
@@ -57,7 +60,7 @@ client.on('message', async msg => {
         case "deletemessage":
             if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
             if(split.length === 1) return msg.reply("usage: "+prefix+"deleteMessage <id>");
-            if(commands.deleteMessage(msg.guild, split[1].trim())){
+            if(commands.deleteMessage(msg.guild, arg)){
                 msg.reply("message deleted!");
                 msg.delete();
             }
@@ -69,7 +72,7 @@ client.on('message', async msg => {
         case "prefix":
             if(!msg.member.hasPermission('ADMINISTRATOR')) return msg.reply("you must have the Administrator permission to use this command!");
             if(split.length === 1) return msg.reply("usage: "+prefix+"prefix <prefix>");
-            if(commands.prefix(msg.guild, split[1].trim())) msg.reply("prefix updated!");
+            if(commands.prefix(msg.guild, arg)) msg.reply("prefix updated!");
             break;
     }
 });
