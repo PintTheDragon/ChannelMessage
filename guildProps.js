@@ -73,7 +73,6 @@ module.exports.sendMessage = function(channel, data, jobId){
     let content = null;
     let embed = null;
     if(data.hasOwnProperty("content")){
-        console.log("h");
         content = data["content"];
     }
     if(data.hasOwnProperty("embeds") && data["embeds"].length == 1) {
