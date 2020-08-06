@@ -17,7 +17,9 @@ module.exports.helpCommand = function(channel){
 
 module.exports.addMessage = function(channel, guild, content){
     try {
-        module.exports.props.guildList[guild.id]["jobs"][Math.max(...Object.keys(module.exports.props.guildList[guild.id]["jobs"]))+1] = {lastId: null, channelId: channel.id, data: JSON.parse(content.replace("\n", ""))};
+        let index = Math.max(...Object.keys(module.exports.props.guildList[guild.id]["jobs"]));
+        if(index === Number.NEGATIVE_INFINITY) index = 0
+        module.exports.props.guildList[guild.id]["jobs"][index+1] = {lastId: null, channelId: channel.id, data: JSON.parse(content.replace("\n", ""))};
         module.exports.props.saveGuild(guild.id);
         module.exports.props.testJob(guild, channel);
         return true;
