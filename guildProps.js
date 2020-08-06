@@ -64,7 +64,7 @@ module.exports.saveGuild = async function(guildId){
     module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"], 'base64').toString('utf8');
 }
 
-module.exports.runJob = async function(guild, jobData, jobId){
+module.exports.runJob = async function(channel, guild, jobData, jobId){
     if(!jobData.hasOwnProperty("lastId") || !jobData.hasOwnProperty("channelId") || !jobData.hasOwnProperty("data")){
         return module.exports.removeJob(guild.id, jobId);
     }
@@ -117,7 +117,7 @@ module.exports.testJob = function(guild, channel){
     let jobs = module.exports.guildList[guild.id]["jobs"];
     Object.keys(jobs).forEach(key => {
         if(jobs[key]["channelId"] === channel.id){
-            module.exports.runJob(guild, jobs[key], key);
+            module.exports.runJob(channel, guild, jobs[key], key);
         }
     });
 }
