@@ -38,7 +38,7 @@ module.exports.addNewGuild = function(guildId){
 
 module.exports.saveGuild = async function(guildId){
     let json = JSON.stringify(module.exports.guildList[guildId]);
-    con.query('INSERT INTO table (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
+    con.query('INSERT INTO Data (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
 }
 
 module.exports.runJob = async function(guild, jobData, jobId){

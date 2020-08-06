@@ -18,6 +18,7 @@ module.exports.helpCommand = function(channel){
 module.exports.addMessage = function(channel, guild, content){
     try {
         module.exports.props.guildList[guild.id]["jobs"][Math.max(Object.keys(module.exports.props.guildList[guild.id]["jobs"]))+1] = {lastId: null, channelId: channel.id, data: JSON.parse(content.replace("\n", ""))};
+        module.exports.props.saveGuild(guild.id);
         return true;
     }
     catch(e){
@@ -30,6 +31,7 @@ module.exports.deleteMessage = function(guild, content){
         if(isNaN(content)) channel.send("Invalid id!");
         if(!module.exports.props.guildList[guild.id]["jobs"].hasOwnProperty(content)) channel.send("Invalid id!");
         delete module.exports.props.guildList[guild.id]["jobs"][content];
+        module.exports.props.saveGuild(guild.id);
         return true;
     }
     catch(e){
@@ -51,5 +53,6 @@ module.exports.messages = function(channel){
 
 module.exports.prefix = function(guild, content){
     module.exports.props.guildList[guild.id]["prefix"] = content;
+    module.exports.props.saveGuild(guild.id);
     return true;
 }
