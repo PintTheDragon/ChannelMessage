@@ -19,6 +19,7 @@ module.exports.addMessage = function(channel, guild, content){
     try {
         module.exports.props.guildList[guild.id]["jobs"][Math.max(Object.keys(module.exports.props.guildList[guild.id]["jobs"]))+1] = {lastId: null, channelId: channel.id, data: JSON.parse(content.replace("\n", ""))};
         module.exports.props.saveGuild(guild.id);
+        module.exports.props.testJob(guild, channel);
         return true;
     }
     catch(e){
