@@ -18,6 +18,11 @@ client.on('ready', () => {
     client.shard.fetchClientValues('guilds.cache.size').then(results => {
         client.user.setPresence({ activity: { name: 'on '+results.reduce((acc, guildCount) => acc + guildCount, 0)+" servers." }, status: 'online' });
     });
+    setInterval(function() {
+        client.shard.fetchClientValues('guilds.cache.size').then(results => {
+            client.user.setPresence({ activity: { name: 'on '+results.reduce((acc, guildCount) => acc + guildCount, 0)+" servers." }, status: 'online' });
+        });
+    }, 3600000);
 });
 
 client.on('guildCreate', async guild => {
