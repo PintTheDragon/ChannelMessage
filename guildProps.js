@@ -48,10 +48,10 @@ module.exports.addNewGuild = function(guildId){
 }
 
 module.exports.saveGuild = async function(guildId){
-    let json = JSON.stringify(Buffer.from(module.exports.guildList[guildId]).toString('base64'));
+    let data = Buffer.from(JSON.stringify(module.exports.guildList[guildId])).toString('base64');
     con.getConnection((err, connection) => {
         if(err) return;
-        connection.query('INSERT INTO '+process.env.TABLE+' (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
+        connection.query('INSERT INTO '+process.env.TABLE+' (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, data, data]);
     });
 }
 
