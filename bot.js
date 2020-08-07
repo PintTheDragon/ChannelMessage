@@ -29,6 +29,16 @@ client.on('ready', () => {
 
 client.on('guildCreate', async guild => {
     props.addNewGuild(guild.id);
+    let channels = guild.channels.cache.filter(channel => channel.type === "text" && (channel.name === "general" || channel.name === "welcome"));
+    if(channels.size < 1){
+        channels = guild.channels.cache.sort(function(chan1,chan2){
+            if(chan1.type !== `text`) return 1;
+            if(!chan1.permissionsFor(guild.me).has(`SEND_MESSAGES`)) return -1;
+            return chan1.position < chan2.position ? -1 : 1;
+        });
+        if(channels.size < 1) return;
+    }
+    channels.first().send("Hi, thanks for inviting me! By default, my prefix is \".\", but you can also ping me instead (ex. <@"+id+"> help). The \".help\" command will tell you about all of my commands, and how to use them. If you want to change my prefix, use the \".prefix <prefix>\" command. I hope you enjoy!");
 });
 
 client.on('message', async msg => {
