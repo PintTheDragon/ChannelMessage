@@ -3,21 +3,20 @@ const mysql = require('mysql');
 let con;
 
 module.exports.setupMysql = function(){
-    con = mysql.createConnection({
+    con = mysql.createPool({
         host: process.env.HOST,
         user: process.env.USERNAME,
         password: process.env.PASSWORD,
         database: process.env.DATABASE
     });
-    con.connect(function(err) {
+    con.getConnection(function(err, connection) {
         if (err) throw err;
-        console.log("Connected!");
-        con.query("SELECT * FROM "+process.env.TABLE+";", async (err, result) =>{
+        connection.query("SELECT * FROM "+process.env.TABLE+";", async (err, result) =>{
             if(err) throw err;
 
             for(let i = 0; i < result.length; i++){
                 try {
-                    module.exports.addGuild(result[i]["id"].replace(/^'/, "").replace(/'$/, ""), JSON.parse(result[i]["data"].replace(/^'/, "").replace(/'$/, "")));
+                    module.exports.addGuild(result[i]["id"].replace(/^'/, "").replace(/'$/, ""), JSON.parse(Buffer.from(result[i]["data"].replace(/^'/, "").replace(/'$/, ""), 'base64').toString('utf8')));
                 }
                 catch(e){
                     module.exports.addNewGuild(result[i]["id"].replace(/^'/, "").replace(/'$/, ""));
@@ -35,20 +34,12 @@ module.exports.addGuild = function(guildId, data){
     module.exports.guildList[guildId] = data;
 
     if(!module.exports.guildList[guildId].hasOwnProperty("prefix")){
-        module.exports.guildList[guildId]["prefix"] = "Lg=="; //"." in base64
+        module.exports.guildList[guildId]["prefix"] = ".";
     }
 
     if(!module.exports.guildList[guildId].hasOwnProperty("jobs")){
         module.exports.guildList[guildId]["jobs"] = {};
     }
-
-    Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
-        module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
-        if(typeof module.exports.guildList[guildId]["jobs"][key]["data"] === "string") {
-            module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(module.exports.guildList[guildId]["jobs"][key]["data"]).replace(/(?:\\[rn])+/g, '');
-        }
-    });
-    module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"], 'base64').toString('utf8');
 }
 
 module.exports.addNewGuild = function(guildId){
@@ -57,19 +48,11 @@ module.exports.addNewGuild = function(guildId){
 }
 
 module.exports.saveGuild = async function(guildId){
-    Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
-        module.exports.guildList[guildId]["jobs"][key]["data"] = Buffer.from(JSON.stringify(module.exports.guildList[guildId]["jobs"][key]["data"])).toString('base64');
+    let json = JSON.stringify(Buffer.from(module.exports.guildList[guildId]).toString('base64'));
+    con.getConnection((err, connection) => {
+        if(err) return;
+        connection.query('INSERT INTO '+process.env.TABLE+' (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
     });
-    module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"]).toString('base64');
-    let json = JSON.stringify(module.exports.guildList[guildId]);
-    con.query('INSERT INTO '+process.env.TABLE+' (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
-    Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
-        module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
-        if(typeof module.exports.guildList[guildId]["jobs"][key]["data"] === "string") {
-            module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(module.exports.guildList[guildId]["jobs"][key]["data"]).replace(/(?:\\[rn])+/g, '');
-        }
-    });
-    module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"], 'base64').toString('utf8');
 }
 
 module.exports.runJob = async function(channel, guild, jobData, jobId){
