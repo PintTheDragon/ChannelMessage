@@ -3,10 +3,10 @@
 </p>
 <h1 align="center">ChannelMessage</h1>
 <p align="center">
-<img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/PintTheDragon/ChannelMessage">
+<a href="https://github.com/PintTheDragon/ChannelMessage"><img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/PintTheDragon/ChannelMessage"></a>
 <a href="https://discord.js.org"><img alt="GitHub package.json dependency version (prod)" src="https://img.shields.io/github/package-json/dependency-version/PintTheDragon/ChannelMessage/discord.js"></a>
-<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/PintTheDragon/ChannelMessage">
-<img alt="GitHub" src="https://img.shields.io/github/license/PintTheDragon/ChannelMessage">
+<a href="https://github.com/PintTheDragon/ChannelMessage"><img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/PintTheDragon/ChannelMessage"></a>
+<a href="https://github.com/PintTheDragon/ChannelMessage"><img alt="GitHub" src="https://img.shields.io/github/license/PintTheDragon/ChannelMessage"></a>
 </p>
 
 ChannelMessage is a bot that will put a message at the bottom of a channel. If any messages are sent, it will be moved below them. This can be used for anything from giving info on a channel to having more organized server info channels. Commands:
