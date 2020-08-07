@@ -28,7 +28,7 @@ client.on('ready', () => {
 });
 
 client.on('guildCreate', async guild => {
-    props.addNewGuild(guild.id);
+    if(!props.guildList.hasOwnProperty(guild.id)) props.addNewGuild(guild.id);
     let channels = guild.channels.cache.filter(channel => channel.type === "text" && (channel.name === "general" || channel.name === "welcome"));
     if(channels.size < 1){
         channels = guild.channels.cache.sort(function(chan1,chan2){
