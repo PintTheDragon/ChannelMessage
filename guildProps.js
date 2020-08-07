@@ -32,8 +32,16 @@ module.exports.setupMysql = function(){
 module.exports.guildList = {};
 
 module.exports.addGuild = function(guildId, data){
-    if(!data.hasOwnProperty("prefix") || !data.hasOwnProperty("jobs")) return module.exports.addNewGuild(guildId);
     module.exports.guildList[guildId] = data;
+
+    if(!module.exports.guildList[guildId].hasOwnProperty("prefix")){
+        module.exports.guildList[guildId]["prefix"] = "Lg=="; //"." in base64
+    }
+
+    if(!module.exports.guildList[guildId].hasOwnProperty("jobs")){
+        module.exports.guildList[guildId]["jobs"] = {};
+    }
+
     Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
         module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
         if(typeof module.exports.guildList[guildId]["jobs"][key]["data"] === "string") {
