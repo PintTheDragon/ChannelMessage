@@ -1,4 +1,3 @@
-require('dotenv').config();
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
@@ -16,7 +15,9 @@ client.on('ready', () => {
     console.log("Bot started!");
     id = client.user.id;
     idMsg = "<@!"+id+">";
-    client.user.setPresence({ activity: { name: 'on '+getServercount()+" servers." }, status: 'online' });
+    client.shard.fetchClientValues('guilds.cache.size').then(results => {
+        client.user.setPresence({ activity: { name: 'on '+results.reduce((acc, guildCount) => acc + guildCount, 0)+" servers." }, status: 'online' });
+    });
 });
 
 client.on('guildCreate', async guild => {
@@ -75,10 +76,6 @@ client.on('message', async msg => {
 function splitOnce(inp, delim){
     let arr = inp.split(delim);
     return [arr.shift(), arr.join(delim)];
-}
-
-function getServercount(){
-    return client.guilds.cache.array().length;
 }
 
 client.login(process.env.TOKEN);
