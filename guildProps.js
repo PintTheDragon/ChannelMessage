@@ -12,7 +12,7 @@ module.exports.setupMysql = function(){
     con.connect(function(err) {
         if (err) throw err;
         console.log("Connected!");
-        con.query("SELECT * FROM Data;", async (err, result) =>{
+        con.query("SELECT * FROM ?;", [process.env.TABLE], async (err, result) =>{
             if(err) throw err;
 
             for(let i = 0; i < result.length; i++){
@@ -54,7 +54,7 @@ module.exports.saveGuild = async function(guildId){
     });
     module.exports.guildList[guildId]["prefix"] = Buffer.from(module.exports.guildList[guildId]["prefix"]).toString('base64');
     let json = JSON.stringify(module.exports.guildList[guildId]);
-    con.query('INSERT INTO Data (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [guildId, json, json]);
+    con.query('INSERT INTO ? (id, data) VALUES(?, ?) ON DUPLICATE KEY UPDATE data="?";', [process.env.TABLE, guildId, json, json]);
     Object.keys(module.exports.guildList[guildId]["jobs"]).forEach(key => {
         module.exports.guildList[guildId]["jobs"][key]["data"] = JSON.parse(Buffer.from(module.exports.guildList[guildId]["jobs"][key]["data"], 'base64').toString('utf8'));
         if(typeof module.exports.guildList[guildId]["jobs"][key]["data"] === "string") {
