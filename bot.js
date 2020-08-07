@@ -10,11 +10,13 @@ commands.props = props;
 
 let id = "";
 let idMsg = "";
+let idMsg1 = "";
 
 client.on('ready', () => {
     console.log("Bot started!");
     id = client.user.id;
     idMsg = "<@!"+id+">";
+    idMsg1 = "<@"+id+">";
     client.shard.fetchClientValues('guilds.cache.size').then(results => {
         client.user.setPresence({ activity: { name: 'on '+results.reduce((acc, guildCount) => acc + guildCount, 0)+" servers." }, status: 'online' });
     });
@@ -37,6 +39,9 @@ client.on('message', async msg => {
     let content = "";
     if(msg.content.trim().startsWith(idMsg)){
         content = splitOnce(msg.content.trim(), idMsg)[1].trim();
+    }
+    else if(msg.content.trim().startsWith(idMsg1)){
+        content = splitOnce(msg.content.trim(), idMsg1)[1].trim();
     }
     else if(msg.content.trim().startsWith(props.guildList[msg.guild.id].prefix)){
         content = splitOnce(msg.content.trim(), props.guildList[msg.guild.id].prefix)[1].trim();
