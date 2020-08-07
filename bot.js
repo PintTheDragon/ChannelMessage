@@ -38,7 +38,7 @@ client.on('guildCreate', async guild => {
         });
         if(channels.size < 1) return;
     }
-    channels.first().send("Hi, thanks for inviting me! By default, my prefix is \".\", but you can also ping me instead (ex. <@"+id+"> help). The \".help\" command will tell you about all of my commands, and how to use them. If you want to change my prefix, use the \".prefix <prefix>\" command. I hope you enjoy!");
+    channels.first().send("Hi, thanks for inviting me! By default, my prefix is `.`, but you can also ping me instead (ex. `<@"+id+"> help`). The `.help` command will tell you about all of my commands, and how to use them. If you want to change my prefix, use the `.prefix <prefix>` command. I hope you enjoy!");
 });
 
 client.on('message', async msg => {
