@@ -33,7 +33,7 @@ module.exports.addMessage = function(msg, split, arg, prefix){
     }
     catch(e){
         msg.channel.send("Invalid data!");
-    };
+    }
 }
 
 module.exports.deleteMessage = async function(msg, split, arg, prefix){

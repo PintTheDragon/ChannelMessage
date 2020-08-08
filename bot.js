@@ -8,6 +8,7 @@ const commands = require("./commands.js");
 commands.Discord = Discord;
 commands.props = props;
 commands.createCommands();
+const messages = require("./messages.js");
 
 let id = "";
 
@@ -46,7 +47,7 @@ client.on('message', async msg => {
 
     if(!props.guildList.hasOwnProperty(msg.guild.id)) props.addNewGuild(msg.guild.id);
 
-    if(!commands.runCommand(msg)) return props.testJob(msg.guild, msg.channel);
+    if(!commands.runCommand(msg)) return messages.testJob(msg.guild, msg.channel);
 });
 
 client.login(process.env.TOKEN);
