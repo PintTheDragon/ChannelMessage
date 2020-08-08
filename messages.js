@@ -62,9 +62,13 @@ module.exports.deleteJob = function(guild, channel){
     if(!module.exports.props.guildList.hasOwnProperty(guild.id)) module.exports.props.addNewGuild(guild.id);
 
     let jobs = module.exports.props.guildList[guild.id]["jobs"];
+    let save = false;
     Object.keys(jobs).forEach(key => {
         if(jobs[key]["channelId"] === channel.id){
             module.exports.removeJob(guild.id, key);
+            save = true;
         }
     });
+
+    if(save) module.exports.props.saveGuild(guild.id);
 }
