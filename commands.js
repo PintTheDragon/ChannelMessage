@@ -123,5 +123,5 @@ module.exports.createCommands = function(){
 
 function splitOnce(inp, delim){
     let arr = inp.split(delim);
-    return [arr.shift(), arr.join(delim)];
+    return [arr.shift(), arr.join(delim)].filter(Boolean);
 }
