@@ -9,6 +9,7 @@ commands.Discord = Discord;
 commands.props = props;
 commands.createCommands();
 const messages = require("./messages.js");
+messages.props = props;
 
 let id = "";
 
