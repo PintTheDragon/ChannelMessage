@@ -1,9 +1,15 @@
 module.exports.Discord = null;
 module.exports.props = null;
 
-module.exports.helpCommand = function(channel){
-    let prefix = module.exports.props.guildList[channel.guild.id]["prefix"];
-    channel.send({embed: new module.exports.Discord.MessageEmbed()
+module.exports.idMsg = "";
+module.exports.idMsg1 = "";
+
+module.exports.commands = {};
+
+module.exports.helpCommand = function(msg, split, arg){
+    if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
+    let prefix = module.exports.props.guildList[msg.channel.guild.id]["prefix"];
+    msg.channel.send({embed: new module.exports.Discord.MessageEmbed()
         .setColor("#0c9ba8")
         .setTitle("Commands")
         .setDescription("Here are all the commands in this bot.")
@@ -15,51 +21,104 @@ module.exports.helpCommand = function(channel){
     });
 }
 
-module.exports.addMessage = function(channel, guild, content){
+module.exports.addMessage = function(msg, split, arg){
+    if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
+    if(split.length === 1) return msg.reply("usage: "+prefix+"addMessage <data>");
     try {
-        let index = Math.max(...Object.keys(module.exports.props.guildList[guild.id]["jobs"]));
+        let index = Math.max(...Object.keys(module.exports.props.guildList[msg.guild.id]["jobs"]));
         if(index === Number.NEGATIVE_INFINITY) index = 0
-        module.exports.props.guildList[guild.id]["jobs"][index+1] = {lastId: null, channelId: channel.id, data: JSON.parse(content.replace("\n", ""))};
-        module.exports.props.saveGuild(guild.id);
-        module.exports.props.testJob(guild, channel);
-        return true;
+        module.exports.props.guildList[msg.guild.id]["jobs"][index+1] = {lastId: null, channelId: msg.channel.id, data: JSON.parse(arg.replace("\n", ""))};
+        module.exports.props.saveGuild(msg.guild.id);
+        module.exports.props.testJob(msg.guild, msg.channel);
+        return msg.delete();
     }
     catch(e){
-        channel.send("Invalid data!");
+        msg.channel.send("Invalid data!");
     };
 }
 
-module.exports.deleteMessage = async function(channel, guild, content){
+module.exports.deleteMessage = async function(msg, split, arg){
+    if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
+    if(split.length === 1) return msg.reply("usage: "+prefix+"deleteMessage <id>");
     try {
-        if(!module.exports.props.guildList[guild.id]["jobs"].hasOwnProperty(content)) channel.send("Invalid id!");
-        let messageId = module.exports.props.guildList[guild.id]["jobs"][content]["lastId"];
+        if(!module.exports.props.guildList[msg.guild.id]["jobs"].hasOwnProperty(arg)) msg.channel.send("Invalid id!");
+        let messageId = module.exports.props.guildList[msg.guild.id]["jobs"][arg]["lastId"];
         if(messageId != null) {
-            let message = await channel.messages.fetch(messageId);
+            let message = await msg.channel.messages.fetch(messageId);
             if (message) message.delete();
         }
-        delete module.exports.props.guildList[guild.id]["jobs"][content];
-        module.exports.props.saveGuild(guild.id);
-        return true;
+        delete module.exports.props.guildList[msg.guild.id]["jobs"][arg];
+        module.exports.props.saveGuild(msg.guild.id);
+        return msg.delete();
     }
     catch(e){
-        channel.send("Invalid id!");
+        msg.channel.send("Invalid id!");
     }
 }
 
-module.exports.messages = function(channel){
+module.exports.messages = function(msg, split, arg){
+    if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
     let embed = new module.exports.Discord.MessageEmbed()
         .setColor("#0c9ba8")
         .setTitle("Messages")
         .setDescription("List of messages.");
-    let jobs = module.exports.props.guildList[channel.guild.id]["jobs"];
+    let jobs = module.exports.props.guildList[msg.channel.guild.id]["jobs"];
     Object.keys(jobs).forEach(key => {
        embed.addField("Id: "+key, "Channel: <#"+jobs[key]["channelId"]+">", true);
     });
-    channel.send({embed: embed});
+    msg.channel.send({embed: embed});
 }
 
-module.exports.prefix = function(guild, content){
-    module.exports.props.guildList[guild.id]["prefix"] = content;
-    module.exports.props.saveGuild(guild.id);
-    return true;
+module.exports.prefix = function(msg, split, arg){
+    if(!msg.member.hasPermission('ADMINISTRATOR')) return msg.reply("you must have the Administrator permission to use this command!");
+    if(split.length === 1) return msg.reply("usage: "+prefix+"prefix <prefix>");
+    module.exports.props.guildList[msg.guild.id]["prefix"] = arg;
+    module.exports.props.saveGuild(msg.guild.id);
+    return msg.reply("prefix updated!");
+}
+
+module.exports.split = function(msg){
+    let content = "";
+    if(msg.content.trim().startsWith(module.exports.idMsg)){
+        content = splitOnce(msg.content.trim(), module.exports.idMsg)[1].trim();
+    }
+    else if(msg.content.trim().startsWith(module.exports.idMsg1)){
+        content = splitOnce(msg.content.trim(), module.exports.idMsg1)[1].trim();
+    }
+    else if(msg.content.trim().startsWith(module.exports.props.guildList[msg.guild.id].prefix)){
+        content = splitOnce(msg.content.trim(), module.exports.props.guildList[msg.guild.id].prefix)[1].trim();
+    }
+    else return false;
+    if(content === "") return false;
+
+    let split = splitOnce(content, " ");
+
+    return [split, split[0].toLowerCase().trim(), split[1].trim()];
+}
+
+module.exports.runCommand = function(msg){
+    try {
+        let split, cmd, arg;
+        [split, cmd, arg] = module.exports.split(msg);
+
+        if (!module.exports.commands.hasOwnProperty(cmd)) return false;
+        module.exports.commands[cmd](msg, split, arg);
+        return true;
+    }
+    catch(e){
+        return false;
+    }
+}
+
+module.exports.createCommands = function(){
+    module.exports.commands["help"] = module.exports.helpCommand;
+    module.exports.commands["addmessage"] = module.exports.addMessage;
+    module.exports.commands["deletemessage"] = module.exports.deleteMessage;
+    module.exports.commands["messages"] = module.exports.messages;
+    module.exports.commands["prefix"] = module.exports.prefix;
+}
+
+function splitOnce(inp, delim){
+    let arr = inp.split(delim);
+    return [arr.shift(), arr.join(delim)];
 }
