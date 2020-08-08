@@ -6,7 +6,7 @@ let con;
 //data is json from https://discohook.org
 module.exports.guildList = {};
 
-module.exports.setupMysql = function(){
+module.exports.setupMysql = function(callback){
     con = mysql.createPool({
         host: process.env.HOST,
         user: process.env.USERNAME,
@@ -26,6 +26,7 @@ module.exports.setupMysql = function(){
                     module.exports.addNewGuild(result[i]["id"].replace(/^'/, "").replace(/'$/, ""));
                 }
             }
+            callback();
         });
     });
 }

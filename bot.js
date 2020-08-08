@@ -3,7 +3,6 @@ const client = new Discord.Client();
 
 const props = require("./guildProps.js");
 props.index = this;
-props.setupMysql();
 const messages = require("./messages.js");
 messages.props = props;
 const commands = require("./commands.js");
@@ -44,6 +43,12 @@ client.on('guildCreate', async guild => {
     channels.first().send("Hi, thanks for inviting me! By default, my prefix is `.`, but you can also ping me instead (ex. `<@"+id+"> help`). The `.help` command will tell you about all of my commands, and how to use them. If you want to change my prefix, use the `.prefix <prefix>` command. I hope you enjoy!");
 });
 
+client.on('channelDelete', async channel => {
+    if(channel.type !== "text") return;
+
+    messages.deleteJob(channel);
+});
+
 client.on('message', async msg => {
     if(msg.author.bot) return;
 
@@ -52,4 +57,6 @@ client.on('message', async msg => {
     if(!commands.runCommand(msg)) return messages.testJob(msg.guild, msg.channel);
 });
 
-client.login(process.env.TOKEN);
+props.setupMysql(() => {
+    client.login(process.env.TOKEN);
+});
