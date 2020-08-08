@@ -33,13 +33,18 @@ module.exports.guildList = {};
 module.exports.addGuild = function(guildId, data){
     module.exports.guildList[guildId] = data;
 
+    let save = false;
+
     if(!module.exports.guildList[guildId].hasOwnProperty("prefix")){
         module.exports.guildList[guildId]["prefix"] = ".";
+        save = true;
     }
-
     if(!module.exports.guildList[guildId].hasOwnProperty("jobs")){
         module.exports.guildList[guildId]["jobs"] = {};
+        save = true;
     }
+
+    if(save) module.exports.saveGuild(guildId);
 }
 
 module.exports.addNewGuild = function(guildId){
