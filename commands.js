@@ -92,7 +92,7 @@ module.exports.split = function(msg){
 
     let split = splitOnce(content, " ");
 
-    return [split, split[0].toLowerCase().trim(), split[1].trim(), module.exports.props.guildList[msg.channel.guild.id]["prefix"]];
+    return [split.filter(Boolean), split[0].toLowerCase().trim(), split[1].trim(), module.exports.props.guildList[msg.channel.guild.id]["prefix"]];
 }
 
 module.exports.runCommand = function(msg){
@@ -123,5 +123,5 @@ module.exports.createCommands = function(){
 
 function splitOnce(inp, delim){
     let arr = inp.split(delim);
-    return [arr.shift(), arr.join(delim)].filter(Boolean);
+    return [arr.shift(), arr.join(delim)];
 }
