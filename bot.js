@@ -46,7 +46,7 @@ client.on('guildCreate', async guild => {
 client.on('channelDelete', async channel => {
     if(channel.type !== "text") return;
 
-    messages.deleteJob(channel);
+    messages.deleteJob(channel.guild, channel);
 });
 
 client.on('message', async msg => {

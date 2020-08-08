@@ -1,16 +1,16 @@
 module.exports.props = null;
 
-module.exports.runJob = async function(channel, jobData, jobId){
+module.exports.runJob = async function(guild, channel, jobData, jobId){
     if(!jobData.hasOwnProperty("lastId") || !jobData.hasOwnProperty("channelId") || !jobData.hasOwnProperty("data")){
-        return module.exports.removeJob(channel.guild.id, jobId);
+        return module.exports.removeJob(guild.id, jobId);
     }
 
     try {
-        let channel = channel.guild.channels.cache.get(jobData["channelId"]);
-        if (!channel) return module.exports.removeJob(channel.guild.id, jobId);
+        let channel = guild.channels.cache.get(jobData["channelId"]);
+        if (!channel) return module.exports.removeJob(guild.id, jobId);
     }
     catch(e){
-        return module.exports.removeJob(channel.guild.id, jobId);
+        return module.exports.removeJob(guild.id, jobId);
     }
 
     if(jobData["lastId"] != null) {
@@ -21,8 +21,8 @@ module.exports.runJob = async function(channel, jobData, jobId){
         catch(e){}
     }
 
-    module.exports.props.guildList[channel.guild.id]["jobs"][jobId]["lastId"] = (await module.exports.sendMessage(channel, jobData["data"], jobId)).id;
-    module.exports.props.saveGuild(channel.guild.id);
+    module.exports.props.guildList[guild.id]["jobs"][jobId]["lastId"] = (await module.exports.sendMessage(channel, jobData["data"], jobId)).id;
+    module.exports.props.saveGuild(guild.id);
 }
 
 module.exports.removeJob = function(guildId, jobId){
@@ -47,24 +47,24 @@ module.exports.sendMessage = function(channel, data, jobId){
     else return channel.send(content, {"embed": embed});
 }
 
-module.exports.testJob = function(channel){
-    if(!module.exports.props.guildList.hasOwnProperty(channel.guild.id)) module.exports.props.addNewGuild(channel.guild.id);
+module.exports.testJob = function(guild, channel){
+    if(!module.exports.props.guildList.hasOwnProperty(guild.id)) module.exports.props.addNewGuild(guild.id);
 
-    let jobs = module.exports.props.guildList[channel.guild.id]["jobs"];
+    let jobs = module.exports.props.guildList[guild.id]["jobs"];
     Object.keys(jobs).forEach(key => {
         if(jobs[key]["channelId"] === channel.id){
-            module.exports.runJob(channel, jobs[key], key);
+            module.exports.runJob(guild, channel, jobs[key], key);
         }
     });
 }
 
-module.exports.deleteJob = function(channel){
-    if(!module.exports.props.guildList.hasOwnProperty(channel.guild.id)) module.exports.props.addNewGuild(channel.guild.id);
+module.exports.deleteJob = function(guild, channel){
+    if(!module.exports.props.guildList.hasOwnProperty(guild.id)) module.exports.props.addNewGuild(guild.id);
 
-    let jobs = module.exports.props.guildList[channel.guild.id]["jobs"];
+    let jobs = module.exports.props.guildList[guild.id]["jobs"];
     Object.keys(jobs).forEach(key => {
         if(jobs[key]["channelId"] === channel.id){
-            module.exports.removeJob(channel.guild.id, key);
+            module.exports.removeJob(guild.id, key);
         }
     });
 }
