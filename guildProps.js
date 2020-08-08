@@ -6,6 +6,8 @@ let con;
 //data is json from https://discohook.org
 module.exports.guildList = {};
 
+module.exports.defaultConfig = {"prefix": ".", "jobs": {}};
+
 module.exports.setupMysql = function(callback){
     con = mysql.createPool({
         host: process.env.HOST,
@@ -36,20 +38,18 @@ module.exports.addGuild = function(guildId, data){
 
     let save = false;
 
-    if(!module.exports.guildList[guildId].hasOwnProperty("prefix")){
-        module.exports.guildList[guildId]["prefix"] = ".";
-        save = true;
-    }
-    if(!module.exports.guildList[guildId].hasOwnProperty("jobs")){
-        module.exports.guildList[guildId]["jobs"] = {};
-        save = true;
-    }
+    Object.keys(module.exports.defaultConfig).forEach((key) => {
+       if(!data.hasOwnProperty(key)){
+           data[key] = module.exports.defaultConfig[key];
+           save = true;
+       }
+    });
 
     if(save) module.exports.saveGuild(guildId);
 }
 
 module.exports.addNewGuild = function(guildId){
-    module.exports.guildList[guildId] = {"prefix": ".", "jobs": {}};
+    module.exports.guildList[guildId] = module.exports.defaultConfig;
     module.exports.saveGuild(guildId);
 }
 
