@@ -4,12 +4,13 @@ const client = new Discord.Client();
 const props = require("./guildProps.js");
 props.index = this;
 props.setupMysql();
+const messages = require("./messages.js");
+messages.props = props;
 const commands = require("./commands.js");
 commands.Discord = Discord;
 commands.props = props;
 commands.createCommands();
-const messages = require("./messages.js");
-messages.props = props;
+commands.message = messages;
 
 let id = "";
 

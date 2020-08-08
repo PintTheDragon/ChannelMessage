@@ -1,5 +1,6 @@
 module.exports.Discord = null;
 module.exports.props = null;
+module.exports.message = null;
 
 module.exports.idMsg = "";
 module.exports.idMsg1 = "";
@@ -28,7 +29,7 @@ module.exports.addMessage = function(msg, split, arg, prefix){
         if(index === Number.NEGATIVE_INFINITY) index = 0
         module.exports.props.guildList[msg.guild.id]["jobs"][index+1] = {lastId: null, channelId: msg.channel.id, data: JSON.parse(arg.replace("\n", ""))};
         module.exports.props.saveGuild(msg.guild.id);
-        module.exports.props.testJob(msg.guild, msg.channel);
+        module.exports.message.testJob(msg.guild, msg.channel);
         return msg.delete();
     }
     catch(e){
