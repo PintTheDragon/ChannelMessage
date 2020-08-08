@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://i.imgur.com/YE0mYLs.png" width="300px"/>
+<a href="https://github.com/PintTheDragon/ChannelMessage"><img src="https://i.imgur.com/YE0mYLs.png" width="300px"/></a>
 </p>
 <h1 align="center">ChannelMessage</h1>
 <p align="center">
