@@ -7,6 +7,8 @@
 <a href="https://discord.js.org"><img alt="GitHub package.json dependency version (prod)" src="https://img.shields.io/github/package-json/dependency-version/PintTheDragon/ChannelMessage/discord.js"></a>
 <a href="https://github.com/PintTheDragon/ChannelMessage"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/PintTheDragon/ChannelMessage/CI"></a>
 <a href="https://github.com/PintTheDragon/ChannelMessage"><img alt="GitHub" src="https://img.shields.io/github/license/PintTheDragon/ChannelMessage"></a>
+<br />
+<a href="https://top.gg/bot/740066787684515882">Check out the official bot!</a>
 </p>
 
 ChannelMessage is a bot that will put a message at the bottom of a channel. If any messages are sent, it will be moved below them. This can be used for anything from giving info on a channel to having more organized server info channels. Commands:
