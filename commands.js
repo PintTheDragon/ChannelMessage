@@ -6,9 +6,8 @@ module.exports.idMsg1 = "";
 
 module.exports.commands = {};
 
-module.exports.helpCommand = function(msg, split, arg){
+module.exports.helpCommand = function(msg, split, arg, prefix){
     if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
-    let prefix = module.exports.props.guildList[msg.channel.guild.id]["prefix"];
     msg.channel.send({embed: new module.exports.Discord.MessageEmbed()
         .setColor("#0c9ba8")
         .setTitle("Commands")
@@ -21,7 +20,7 @@ module.exports.helpCommand = function(msg, split, arg){
     });
 }
 
-module.exports.addMessage = function(msg, split, arg){
+module.exports.addMessage = function(msg, split, arg, prefix){
     if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
     if(split.length === 1) return msg.reply("usage: "+prefix+"addMessage <data>");
     try {
@@ -37,7 +36,7 @@ module.exports.addMessage = function(msg, split, arg){
     };
 }
 
-module.exports.deleteMessage = async function(msg, split, arg){
+module.exports.deleteMessage = async function(msg, split, arg, prefix){
     if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
     if(split.length === 1) return msg.reply("usage: "+prefix+"deleteMessage <id>");
     try {
@@ -56,7 +55,7 @@ module.exports.deleteMessage = async function(msg, split, arg){
     }
 }
 
-module.exports.messages = function(msg, split, arg){
+module.exports.messages = function(msg, split, arg, prefix){
     if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
     let embed = new module.exports.Discord.MessageEmbed()
         .setColor("#0c9ba8")
@@ -69,7 +68,7 @@ module.exports.messages = function(msg, split, arg){
     msg.channel.send({embed: embed});
 }
 
-module.exports.prefix = function(msg, split, arg){
+module.exports.prefix = function(msg, split, arg, prefix){
     if(!msg.member.hasPermission('ADMINISTRATOR')) return msg.reply("you must have the Administrator permission to use this command!");
     if(split.length === 1) return msg.reply("usage: "+prefix+"prefix <prefix>");
     module.exports.props.guildList[msg.guild.id]["prefix"] = arg;
@@ -93,16 +92,18 @@ module.exports.split = function(msg){
 
     let split = splitOnce(content, " ");
 
-    return [split, split[0].toLowerCase().trim(), split[1].trim()];
+    return [split, split[0].toLowerCase().trim(), split[1].trim(), module.exports.props.guildList[msg.channel.guild.id]["prefix"]];
 }
 
 module.exports.runCommand = function(msg){
     try {
-        let split, cmd, arg;
-        [split, cmd, arg] = module.exports.split(msg);
+        let split, cmd, arg, prefix;
+        let res = module.exports.split(msg);
+        if(res === false) return false;
+        [split, cmd, arg, prefix] = res;
 
         if (!module.exports.commands.hasOwnProperty(cmd)) return false;
-        module.exports.commands[cmd](msg, split, arg);
+        module.exports.commands[cmd](msg, split, arg, prefix);
         return true;
     }
     catch(e){
@@ -113,7 +114,9 @@ module.exports.runCommand = function(msg){
 module.exports.createCommands = function(){
     module.exports.commands["help"] = module.exports.helpCommand;
     module.exports.commands["addmessage"] = module.exports.addMessage;
+    module.exports.commands["createmessage"] = module.exports.addMessage;
     module.exports.commands["deletemessage"] = module.exports.deleteMessage;
+    module.exports.commands["removemessage"] = module.exports.deleteMessage;
     module.exports.commands["messages"] = module.exports.messages;
     module.exports.commands["prefix"] = module.exports.prefix;
 }

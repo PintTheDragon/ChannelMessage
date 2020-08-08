@@ -7,6 +7,7 @@ props.setupMysql();
 const commands = require("./commands.js");
 commands.Discord = Discord;
 commands.props = props;
+commands.createCommands();
 
 let id = "";
 
@@ -15,8 +16,6 @@ client.on('ready', () => {
     id = client.user.id;
     commands.idMsg = "<@!"+id+">";
     commands.idMsg1 = "<@"+id+">";
-
-    commands.createCommands();
 
     client.shard.fetchClientValues('guilds.cache.size').then(results => {
         client.user.setPresence({ activity: { name: 'on '+results.reduce((acc, guildCount) => acc + guildCount, 0)+" servers." }, status: 'online' });
