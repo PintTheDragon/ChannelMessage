@@ -25,15 +25,22 @@ module.exports.addMessage = function(msg, split, arg, prefix){
     if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
     if(split.length === 1) return msg.reply("usage: "+prefix+"addMessage <data>");
     try {
+        let json;
+        try{
+            json = JSON.parse(arg.replace("\n", ""));
+        }
+        catch(e){
+            json = {"content": arg};
+        }
         let index = Math.max(...Object.keys(module.exports.props.guildList[msg.guild.id]["jobs"]));
         if(index === Number.NEGATIVE_INFINITY) index = 0
-        module.exports.props.guildList[msg.guild.id]["jobs"][index+1] = {lastId: null, channelId: msg.channel.id, data: JSON.parse(arg.replace("\n", ""))};
+        module.exports.props.guildList[msg.guild.id]["jobs"][index+1] = {lastId: null, channelId: msg.channel.id, data: json};
         module.exports.props.saveGuild(msg.guild.id);
         module.exports.message.testJob(msg.guild, msg.channel);
         return msg.delete();
     }
     catch(e){
-        msg.channel.send("Invalid data!");
+        msg.channel.send("An error occurred!");
     }
 }
 
