@@ -100,6 +100,8 @@ module.exports.split = function(msg){
 
     let split = splitOnce(content, " ");
 
+    if(split[0] === "") split = [split[1], ""];
+
     return [split.filter(Boolean), split[0].toLowerCase().trim(), split[1].trim(), module.exports.props.guildList[msg.channel.guild.id]["prefix"]];
 }
 
