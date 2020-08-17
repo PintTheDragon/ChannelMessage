@@ -10,7 +10,7 @@
   "author": "PintTheDragon",
   "license": "Apache-2.0",
   "dependencies": {
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "mysql": "^2.18.1"
   }
