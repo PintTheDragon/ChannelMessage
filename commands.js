@@ -48,10 +48,11 @@ module.exports.deleteMessage = async function(msg, split, arg, prefix){
     if(!(msg.member.hasPermission('ADMINISTRATOR') || msg.member.hasPermission('MANAGE_MESSAGES'))) return msg.reply("you must have the Manage Messages permission to use this command!");
     if(split.length === 1) return msg.reply("usage: "+prefix+"deleteMessage <id>");
     try {
-        if(!module.exports.props.guildList[msg.guild.id]["jobs"].hasOwnProperty(arg)) msg.channel.send("Invalid id!");
+        if(!module.exports.props.guildList[msg.guild.id]["jobs"].hasOwnProperty(arg)) return msg.channel.send("Invalid id!");
         let messageId = module.exports.props.guildList[msg.guild.id]["jobs"][arg]["lastId"];
         if(messageId != null) {
-            let message = await msg.channel.messages.fetch(messageId);
+            let channel = await msg.guild.channels.cache.get(module.exports.props.guildList[msg.guild.id]["jobs"][arg]["channelId"]);
+            let message = !channel ? null : channel.messages.fetch(messageId);
             if (message) message.delete();
         }
         delete module.exports.props.guildList[msg.guild.id]["jobs"][arg];
